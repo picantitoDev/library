@@ -1,3 +1,38 @@
-table{
+table {
     border: 1px solid black;
+}
+
+input, label {
+    display: block;
+}
+
+dialog {
+    background-color: #ffff;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    visibility: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+dialog[open] {
+    visibility: visible;
+    opacity: 1;
+}
+
+.input-container {
+    margin-bottom: 12px;
+}
+
+#read-container {
+    display: flex;
+    justify-content: end;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
 }

@@ -46,11 +46,15 @@ function display(){
     });
 };
 
-newButton.addEventListener("click", function(){
+newButton.addEventListener("click", function () {
     formDialog.showModal();
 });
 
-
+formDialog.addEventListener("click", function(event) {
+    if (event.target === formDialog) { 
+        formDialog.close(); 
+    }
+});
 
 
 display();

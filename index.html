@@ -11,9 +11,9 @@
         <thead>
             <tr>
                 <th>Title</th>
-            <th>Author</th>
-            <th>Pages</th>
-            <th>Read</th>
+                <th>Author</th>
+                <th>Pages</th>
+                <th>Read</th>
             </tr>
         </thead>
         <tbody>
@@ -23,9 +23,36 @@
 
     <button id="new-button">New Book (+)</button>
     <dialog id="book-form-dialog">
-        What's this
+        <div class="form-container">
+            <p>Add a new Book</p>
+            <form action="#">
+                <div class="input-container">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title">
+                </div>
+
+                <div class="input-container">
+                    <label for="author">Author</label>
+                    <input type="text" id="author" name="author">
+                </div>
+
+                <div class="input-container">
+                    <label for="pages">Pages</label>
+                    <input type="number" id="pages" name="pages">
+                </div>
+
+                <div class="input-container" id="read-container">
+                    <label for="read">Read?</label>
+                    <input type="checkbox" id="read" name="read">
+                </div>
+
+                <div class="button-container">
+                    <button type="submit">Create Book</button>
+                </div>
+            </form>
+        </div>
     </dialog>
+
     <script src="script.js"></script>
 </body>
-
 </html>
