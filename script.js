@@ -73,22 +73,10 @@ function openEditDialog(book) {
     document.getElementById('edit-read').checked = book.read;
 }
 
-function checkIfExisting(title, author, excludeIndex = -1) {
-    for (let i = 0; i < myLibrary.length; i++) {
-        if (i !== excludeIndex && myLibrary[i].title === title && myLibrary[i].author === author) {
-            return true; 
-        }
-    }
-    return false; 
-}
-
-function checkIfExisting(title, author) {
-    for (let i = 0; i < myLibrary.length; i++) {
-        if (myLibrary[i].title === title && myLibrary[i].author === author) {
-            return true; 
-        }
-    }
-    return false; 
+function isBookExisting(title, author, excludeIndex = -1) {
+    return myLibrary.some((book, index) => 
+        index !== excludeIndex && book.title === title && book.author === author
+    );
 }
 
 function handleSave(currentEditIndex) {
@@ -101,7 +89,7 @@ function handleSave(currentEditIndex) {
 
 
 
-    if (checkIfExisting(newTitle, newAuthor, currentEditIndex)) {
+    if (isBookExisting(newTitle, newAuthor, currentEditIndex)) {
         errorMessage.textContent = "This book already exists.";
         errorMessage.style.display = "block";
         return; 
@@ -160,7 +148,7 @@ function editBook() {
         editButton.addEventListener("click", function () {
             const currentEditIndex = parseInt(editButton.parentElement.parentElement.className.split(" ")[1].split("-")[2]);
             const book = myLibrary[currentEditIndex];
-
+            const editForm = document.querySelector('#edit-form');
             openEditDialog(book);
             setupErrorHiding();
 
@@ -168,6 +156,10 @@ function editBook() {
             saveButton.replaceWith(newSaveButton);
 
             newSaveButton.addEventListener('click', function () {
+                if (!editForm.checkValidity()) {
+                    editForm.reportValidity();
+                    return;
+                }
                 handleSave(currentEditIndex);
             });
         });
@@ -213,7 +205,7 @@ sumbitButton.addEventListener("click", function () {
         let pages = document.getElementById('pages').value;
         let read = document.getElementById('read').checked;
 
-        if(checkIfExisting(title, author)){
+        if(isBookExisting(title, author)){
             console.log("book already exists");
             const errorMessage = document.getElementById('create-error-message');
             errorMessage.textContent = "This book already exists!";
