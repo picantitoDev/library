@@ -227,6 +227,12 @@ input:checked+.slider:before {
     justify-content: start;
 }
 
+.edit-button-container{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
 button {
     border: none;
     border-radius: 6px;

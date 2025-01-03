@@ -1,6 +1,9 @@
 const formDialog = document.querySelector('#book-form-dialog');
+const editFormDialog = document.querySelector('#edit-book-form-dialog');
 const newButton = document.querySelector('#new-button');
 const sumbitButton = document.querySelector('#sumbit');
+const saveButton = document.querySelector('#save');
+const cancelButton = document.querySelector('#cancel');
 const bookContainer = document.querySelector('.book-container');
 
 const myLibrary = [];
@@ -45,26 +48,61 @@ function display() {
         bookContainer.appendChild(bookCard);
     }
     deleteBook();
-    updateBook();
+    readBook();
+    editBook();
 }
 
 function deleteBook() {
     let removeButtons = document.querySelectorAll('.remove-button');
     removeButtons.forEach((removeButton) => {
         removeButton.addEventListener("click", function () {
-            let word = removeButton.parentElement.parentElement.className.split(" ")[1].split("-")[2];
+            let index = removeButton.parentElement.parentElement.className.split(" ")[1].split("-")[2];
             removeButton.parentElement.parentElement.remove();
-            myLibrary.splice(word, 1);
+            myLibrary.splice(index, 1);
             console.log("Library elements: " + myLibrary.length);
         });
     });
 }
 
-function updateBook() {
+function editBook() {
+    let editButtons = document.querySelectorAll('.edit-button');
+    editButtons.forEach((editButton) => {
+        editButton.addEventListener("click", function () {
+            let index = editButton.parentElement.parentElement.className.split(" ")[1].split("-")[2];
+            let book = myLibrary[index];
+
+            editFormDialog.showModal();
+            document.getElementById('edit-title').value = book.title;
+            document.getElementById('edit-author').value = book.author;
+            document.getElementById('edit-pages').value = book.pages;
+            document.getElementById('edit-read').checked = book.read;
+
+            saveButton.addEventListener('click', function () {
+                event.preventDefault();
+                console.log("Save button clicked!");
+                book.title = document.getElementById('edit-title').value;
+                book.author = document.getElementById('edit-author').value;
+                book.pages = document.getElementById('edit-pages').value;
+                book.read = document.getElementById('edit-read').checked;
+                display();
+                editFormDialog.close();
+            });
+        });
+    });
+}
+
+
+cancelButton.addEventListener('click', function () {
+    event.preventDefault();
+    console.log("Cancel button clicked!");
+    editFormDialog.close();
+});
+
+function readBook() {
     let readInput = document.querySelectorAll('.toggle');
     readInput.forEach((input) => {
         input.addEventListener("click", function () {
-            let word = input.closest('.book-card').className.split(" ")[1].split("-")[2]; 
+            let word = input.closest('.book-card').className.split(" ")[1].split("-")[2];
             if (input.checked === true) {
                 myLibrary[word].read = true;
                 console.log(myLibrary[word].read);
@@ -80,30 +118,27 @@ newButton.addEventListener("click", function () {
     formDialog.showModal();
 });
 
+
 sumbitButton.addEventListener("click", function () {
     event.preventDefault();
 
-    const form = document.querySelector('form'); // Get the form element
-    if (form.checkValidity()) { // Check if the form is valid
+    const form = document.querySelector('form');
+    if (form.checkValidity()) {
         let title = document.getElementById('title').value;
         let author = document.getElementById('author').value;
         let pages = document.getElementById('pages').value;
         let read = document.getElementById('read').checked;
 
-        formDialog.close(); // Close the form dialog
-
-        // Add book to library
+        formDialog.close();
         addBookToLibrary(title, author, pages, read);
 
-        // Reset form fields after submission
         document.getElementById('title').value = "";
         document.getElementById('author').value = "";
         document.getElementById('pages').value = "";
         document.getElementById('read').checked = false;
-
-        // Display updated library
         display();
+
     } else {
-        form.reportValidity(); // Show validation error messages if the form is invalid
+        form.reportValidity();
     }
 });
