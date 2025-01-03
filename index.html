@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
@@ -55,6 +57,8 @@
                         <input type="checkbox" id="read" name="read">
                     </div>
 
+                    <div id="create-error-message" style="color: red; display: none;"></div>
+
                     <div class="button-container">
                         <button type="submit" id="sumbit">Create Book</button>
                     </div>
@@ -86,10 +90,13 @@
                         <input type="checkbox" id="edit-read" name="read">
                     </div>
 
+                    <div id="error-message" style="color: red; display: none;"></div>
+
                     <div class="edit-button-container">
                         <button id="cancel">Cancel</button>
                         <button type="submit" id="save">Save</button>
                     </div>
+
                 </form>
             </div>
         </dialog>

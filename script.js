@@ -8,6 +8,8 @@ const bookContainer = document.querySelector('.book-container');
 
 const myLibrary = [];
 
+let currentEditIndex = null;
+
 function Book(title, author, pages, read) {
     // the constructor...
     this.title = title;
@@ -63,29 +65,110 @@ function deleteBook() {
         });
     });
 }
+function openEditDialog(book) {
+    editFormDialog.showModal();
+    document.getElementById('edit-title').value = book.title;
+    document.getElementById('edit-author').value = book.author;
+    document.getElementById('edit-pages').value = book.pages;
+    document.getElementById('edit-read').checked = book.read;
+}
+
+function checkIfExisting(title, author, excludeIndex = -1) {
+    for (let i = 0; i < myLibrary.length; i++) {
+        if (i !== excludeIndex && myLibrary[i].title === title && myLibrary[i].author === author) {
+            return true; 
+        }
+    }
+    return false; 
+}
+
+function checkIfExisting(title, author) {
+    for (let i = 0; i < myLibrary.length; i++) {
+        if (myLibrary[i].title === title && myLibrary[i].author === author) {
+            return true; 
+        }
+    }
+    return false; 
+}
+
+function handleSave(currentEditIndex) {
+    event.preventDefault();
+    const newTitle = document.getElementById('edit-title').value;
+    const newAuthor = document.getElementById('edit-author').value;
+    const newPages = document.getElementById('edit-pages').value;
+    const newReadStatus = document.getElementById('edit-read').checked;
+    const errorMessage = document.getElementById('error-message');
+
+
+
+    if (checkIfExisting(newTitle, newAuthor, currentEditIndex)) {
+        errorMessage.textContent = "This book already exists.";
+        errorMessage.style.display = "block";
+        return; 
+    }
+
+    errorMessage.style.display = "none";
+
+    const currentBook = myLibrary[currentEditIndex];
+    currentBook.title = newTitle;
+    currentBook.author = newAuthor;
+    currentBook.pages = newPages;
+    currentBook.read = newReadStatus;
+
+    display();
+    editFormDialog.close();
+}
+
+function setupErrorHiding() {
+    const errorMessage = document.getElementById('error-message');
+    const inputs = [
+        document.getElementById('edit-title'),
+        document.getElementById('edit-author'),
+        document.getElementById('edit-pages'),
+    ];
+
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            if (errorMessage.style.display === "block") {
+                errorMessage.style.display = "none"; 
+            }
+        });
+    });
+}
+
+function setupCreateErrorHiding() {
+    const errorMessage = document.getElementById('create-error-message');
+    const inputs = [
+        document.getElementById('title'),
+        document.getElementById('author'),
+        document.getElementById('pages'),
+    ];
+
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            if (errorMessage.style.display === "block") {
+                errorMessage.style.display = "none"; 
+            }
+        });
+    });
+}
+
 
 function editBook() {
-    let editButtons = document.querySelectorAll('.edit-button');
+    const editButtons = document.querySelectorAll('.edit-button');
     editButtons.forEach((editButton) => {
         editButton.addEventListener("click", function () {
-            let index = editButton.parentElement.parentElement.className.split(" ")[1].split("-")[2];
-            let book = myLibrary[index];
+            const currentEditIndex = parseInt(editButton.parentElement.parentElement.className.split(" ")[1].split("-")[2]);
+            const book = myLibrary[currentEditIndex];
 
-            editFormDialog.showModal();
-            document.getElementById('edit-title').value = book.title;
-            document.getElementById('edit-author').value = book.author;
-            document.getElementById('edit-pages').value = book.pages;
-            document.getElementById('edit-read').checked = book.read;
+            openEditDialog(book);
+            setupErrorHiding();
 
-            saveButton.addEventListener('click', function () {
-                event.preventDefault();
-                console.log("Save button clicked!");
-                book.title = document.getElementById('edit-title').value;
-                book.author = document.getElementById('edit-author').value;
-                book.pages = document.getElementById('edit-pages').value;
-                book.read = document.getElementById('edit-read').checked;
-                display();
-                editFormDialog.close();
+            const newSaveButton = saveButton.cloneNode(true);
+            saveButton.replaceWith(newSaveButton);
+
+            newSaveButton.addEventListener('click', function () {
+                handleSave(currentEditIndex);
             });
         });
     });
@@ -123,12 +206,21 @@ sumbitButton.addEventListener("click", function () {
     event.preventDefault();
 
     const form = document.querySelector('form');
+
     if (form.checkValidity()) {
         let title = document.getElementById('title').value;
         let author = document.getElementById('author').value;
         let pages = document.getElementById('pages').value;
         let read = document.getElementById('read').checked;
 
+        if(checkIfExisting(title, author)){
+            console.log("book already exists");
+            const errorMessage = document.getElementById('create-error-message');
+            errorMessage.textContent = "This book already exists!";
+            errorMessage.style.display = "block";
+            return;
+        }
+        setupCreateErrorHiding();
         formDialog.close();
         addBookToLibrary(title, author, pages, read);
 
